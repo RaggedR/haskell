@@ -1,0 +1,45 @@
+cabal-version:      3.14
+name:               qhask
+version:            0.1.0.0
+synopsis:           Q-series and partition combinatorics library
+license:            MIT
+license-file:       LICENSE
+author:             Robin Langer
+maintainer:         langer.robin@gmail.com
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+
+common warnings
+    ghc-options: -Wall
+
+library
+    import:           warnings
+    exposed-modules:
+        QHask.QSeries
+        QHask.Partition
+        QHask.Profile
+        QHask.CPP
+        QHask.Conjecture
+    build-depends:
+        base ^>=4.18.3.0,
+        containers
+    hs-source-dirs:   src
+    default-language: GHC2021
+
+test-suite qhask-test
+    import:           warnings
+    type:             exitcode-stdio-1.0
+    main-is:          Spec.hs
+    other-modules:
+        QHask.QSeriesSpec
+        QHask.PartitionSpec
+        QHask.ProfileSpec
+        QHask.CPPSpec
+        QHask.ConjectureSpec
+    build-depends:
+        base ^>=4.18.3.0,
+        containers,
+        hspec,
+        qhask
+    hs-source-dirs:   test
+    default-language: GHC2021
