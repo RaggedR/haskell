@@ -9,6 +9,8 @@ module QHask.Partition
     , genPartitions
     , genCompatible
     , partitionsOf
+    , containedIn
+    , dominates
     ) where
 
 -- | A partition: a weakly decreasing list of positive integers.
@@ -87,6 +89,20 @@ genCompatible nuPrev shift maxPart maxSize =
                      | p <- [ub, ub - 1 .. 1]
                      , rest <- go (pos + 1) p (remaining - p)
                      ]
+
+-- | Does λ fit inside μ? i.e., λ_i ≤ μ_i for all i.
+containedIn :: Partition -> Partition -> Bool
+containedIn (Partition lam) (Partition mu) =
+    length lam <= length mu && and (zipWith (<=) lam mu)
+
+-- | Dominance order: λ dominates μ iff Σ_{i≤k} λ_i ≥ Σ_{i≤k} μ_i for all k.
+dominates :: Partition -> Partition -> Bool
+dominates lam mu =
+    weight lam == weight mu &&
+    all (>= 0) (zipWith (-) (partialSums lam) (partialSums mu))
+  where
+    n = max (partLen lam) (partLen mu)
+    partialSums p = scanl1 (+) [getPart p i | i <- [0..n-1]]
 
 -- | All partitions of exactly n.
 partitionsOf :: Int -> [Partition]
