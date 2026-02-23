@@ -240,10 +240,15 @@ papers/
 
 ## Status
 
-- [x] QHask library: 5 modules, 67 tests, shipped
+- [x] QHask library: 14 modules (incl. symmetric functions), 67+ tests, shipped
 - [ ] QHask CLI executable (Main.hs with command interface)
 - [ ] QHask agent skill definition
-- [ ] Literature hierarchy builder (Level 0 → Level 1 → Level 2)
-- [ ] Literature agent skill definition
-- [ ] Sage-combinat port (symmetric functions in Haskell)
-- [ ] Meta-review pipeline (/summarize-nodes skill)
+- [x] Literature hierarchy builder (Level 0 → Level 1 → Level 2)
+  - Level 0: 76 papers indexed, 4794 chunks, ChromaDB + knowledge graph (559 concepts, 486 edges)
+  - Level 1: 555 concept summaries generated via parallel RAG+LLM pipeline (~/data/arxiv-rag/compressed/)
+  - Level 2: 10 meta-summaries covering entire research landscape (~/data/arxiv-rag/meta-summaries/)
+  - Level 2 knowledge graph + interactive visualization built
+- [x] Literature agent query tool (literature_agent.py — progressive Level 2→1→0 drill-down)
+- [x] Literature agent Claude Code skill definition (`/literature` command → literature_agent.py)
+- [x] Sage-combinat port (symmetric functions in Haskell) — all 5 classical bases shipped
+- [x] Meta-review pipeline (generate_summaries.py + build_level2.py)
