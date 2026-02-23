@@ -40,42 +40,13 @@ chainToRows nRows chain =
     | i <- [0 .. nRows - 1]
     ]
 
--- | Enumerate all shapes ν such that ν/inner is a horizontal strip of size count,
--- with ν ⊆ outer.
---
--- Horizontal strip condition: inner_i ≤ ν_i for all i, and ν_i ≤ inner_{i-1}
--- for i ≥ 1 (at most one cell per column).
-horizontalStrips :: Partition -> Partition -> Int -> [Partition]
-horizontalStrips outer inner count
-    | count < 0 = []
-    | count == 0 = [inner]
-    | otherwise = map (Partition . dropTrailingZeros) $ go 0 count
-  where
-    nRows = partLen outer
-
-    go :: Int -> Int -> [[Int]]
-    go row remaining
-        | remaining < 0  = []
-        | row >= nRows   = [[] | remaining == 0]
-        | otherwise =
-            [ newVal : rest
-            | newVal <- [hi, hi - 1 .. lo]
-            , rest <- go (row + 1) (remaining - (newVal - innerRow))
-            ]
-      where
-        innerRow = getPart inner row
-        lo = innerRow
-        hi = minimum [ getPart outer row
-                     , innerRow + remaining
-                     , if row == 0 then getPart outer 0 else getPart inner (row - 1)
-                     ]
-
-    dropTrailingZeros = reverse . dropWhile (== 0) . reverse
-
 -- | Entry (λ,μ) of the inverse Kostka matrix K^{-1}.
 -- K is upper-unitriangular in dominance order: K_{λ,μ} ≠ 0 only when λ dominates μ,
 -- and K_{λ,λ} = 1. The inverse is computed by back-substitution:
 -- (K^{-1})_{λ,μ} = -Σ_{ν: λ ▷ ν ≥ μ} K_{λ,ν} · (K^{-1})_{ν,μ}
+--
+-- TODO: Memoize — naive recursion recomputes subproblems. For degree ≥ 6,
+-- computing the full inverse matrix per degree via Map would be more efficient.
 inverseKostkaEntry :: Partition -> Partition -> Rational
 inverseKostkaEntry lam mu
     | weight lam /= weight mu = 0

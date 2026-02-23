@@ -4,10 +4,9 @@ module QHask.Sym.Homogeneous
     , mulH
     ) where
 
-import Data.List (sortBy)
 import qualified Data.Map.Strict as Map
 
-import QHask.Partition (Partition(..), partitionsOf, weight)
+import QHask.Partition (Partition(..), mergeParts, partitionsOf, weight)
 import QHask.Sym.Types
 import QHask.Sym.Kostka (kostkaNumber, inverseKostkaEntry)
 
@@ -24,11 +23,6 @@ mulH (SymFun a) (SymFun b) = SymFun $ Map.filter (/= 0) $
         | (mu, ca) <- Map.toList a
         , (nu, cb) <- Map.toList b
         ]
-
--- | Merge two partitions by combining and re-sorting parts.
-mergeParts :: Partition -> Partition -> Partition
-mergeParts (Partition ps) (Partition qs) =
-    Partition $ sortBy (flip compare) (ps ++ qs)
 
 instance Basis Homo where
     basisName _ = "h"

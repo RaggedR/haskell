@@ -97,15 +97,24 @@ QHask.Conjecture — Compute Q_n polynomials, Borodin product, verify positivity
 5. Executes via `cabal repl` or `runghc`
 6. Returns formatted results to Main Claude
 
-### Future: Sage-combinat port
-As we port symmetric function machinery to Haskell, the catalog grows:
+### Sage-combinat port (shipped)
+The symmetric function machinery is now implemented in `QHask.Sym.*`:
 ```
-QHask.Symmetric.Schur     — Schur functions, Kostka numbers, LR coefficients
-QHask.Symmetric.PowerSum  — Power sum basis, plethysm
-QHask.Symmetric.Monomial  — Monomial symmetric functions
-QHask.Symmetric.Macdonald — Macdonald polynomials, qt-Kostka
-QHask.Symmetric.Bases     — Change-of-basis machinery, transition matrices
-QHask.QSym                — Quasi-symmetric functions, M and L bases
+QHask.Sym.Types       — Phantom-typed SymFun, Basis class, arithmetic
+QHask.Sym.Kostka      — SSYT enumeration, Kostka numbers, inverse Kostka
+QHask.Sym.LR          — Littlewood-Richardson coefficients
+QHask.Sym.Schur       — Schur basis, multiplication via LR rule
+QHask.Sym.Monomial    — Monomial basis, via (transpose of inverse) Kostka
+QHask.Sym.Homogeneous — Complete homogeneous basis, direct multiplication
+QHask.Sym.Elementary  — Elementary basis, via omega involution
+QHask.Sym.PowerSum    — Power sum basis, Murnaghan-Nakayama characters
+QHask.Sym             — Umbrella: changeBasis, omega, innerProduct
+```
+
+Future extensions:
+```
+QHask.Sym.Macdonald   — Macdonald polynomials, qt-Kostka
+QHask.QSym            — Quasi-symmetric functions, M and L bases
 ```
 
 The type system enforces basis membership: you can't accidentally add a Schur
@@ -240,7 +249,7 @@ papers/
 
 ## Status
 
-- [x] QHask library: 14 modules (incl. symmetric functions), 67+ tests, shipped
+- [x] QHask library: 14 modules (incl. symmetric functions), 173 tests, shipped
 - [ ] QHask CLI executable (Main.hs with command interface)
 - [ ] QHask agent skill definition
 - [x] Literature hierarchy builder (Level 0 → Level 1 → Level 2)

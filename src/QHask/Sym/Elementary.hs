@@ -4,10 +4,9 @@ module QHask.Sym.Elementary
     , mulE
     ) where
 
-import Data.List (sortBy)
 import qualified Data.Map.Strict as Map
 
-import QHask.Partition (Partition(..), conjugate, partitionsOf, weight)
+import QHask.Partition (Partition(..), conjugate, mergeParts, partitionsOf, weight)
 import QHask.Sym.Types
 import QHask.Sym.Kostka (kostkaNumber, inverseKostkaEntry)
 
@@ -23,10 +22,6 @@ mulE (SymFun a) (SymFun b) = SymFun $ Map.filter (/= 0) $
         | (mu, ca) <- Map.toList a
         , (nu, cb) <- Map.toList b
         ]
-
-mergeParts :: Partition -> Partition -> Partition
-mergeParts (Partition ps) (Partition qs) =
-    Partition $ sortBy (flip compare) (ps ++ qs)
 
 instance Basis Elem where
     basisName _ = "e"

@@ -10,6 +10,9 @@ import QHask.Partition
 
 -- | Compute all LR coefficients c^ν_{λ,μ} for the product s_λ · s_μ.
 -- Returns a map from ν to c^ν_{λ,μ}.
+--
+-- TODO: Currently generates all partitionsOf n and filters by containedIn.
+-- Could be optimized to only generate candidate ν with λ ⊆ ν directly.
 lrRule :: Partition -> Partition -> Map Partition Integer
 lrRule lam mu
     | weight lam == 0 = Map.singleton mu 1
@@ -64,31 +67,3 @@ latticeCheck prev inner new =
         cumBShifted = scanl (+) 0 b  -- [0, b_0, b_0+b_1, ...]
     in all (uncurry (<=)) (zip cumA cumBShifted)
 
--- | Enumerate shapes σ with inner ⊆ σ ⊆ outer where σ/inner is a horizontal
--- strip of the given size.
-horizontalStrips :: Partition -> Partition -> Int -> [Partition]
-horizontalStrips outer inner count
-    | count < 0 = []
-    | count == 0 = [inner]
-    | otherwise = map (Partition . dropTrailingZeros) $ go 0 count
-  where
-    nRows = partLen outer
-
-    go :: Int -> Int -> [[Int]]
-    go row remaining
-        | remaining < 0  = []
-        | row >= nRows   = [[] | remaining == 0]
-        | otherwise =
-            [ newVal : rest
-            | newVal <- [hi, hi - 1 .. lo]
-            , rest <- go (row + 1) (remaining - (newVal - innerRow))
-            ]
-      where
-        innerRow = getPart inner row
-        lo = innerRow
-        hi = minimum [ getPart outer row
-                     , innerRow + remaining
-                     , if row == 0 then getPart outer 0 else getPart inner (row - 1)
-                     ]
-
-    dropTrailingZeros = reverse . dropWhile (== 0) . reverse

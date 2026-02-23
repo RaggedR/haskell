@@ -6,10 +6,10 @@ module QHask.Sym.PowerSum
     , character
     ) where
 
-import Data.List (sortBy, group, sort)
+import Data.List (group, sort)
 import qualified Data.Map.Strict as Map
 
-import QHask.Partition (Partition(..), partitionsOf, weight)
+import QHask.Partition (Partition(..), mergeParts, partitionsOf, weight)
 import QHask.Sym.Types
 
 -- | Power sum basis element p_μ.
@@ -24,10 +24,6 @@ mulP (SymFun a) (SymFun b) = SymFun $ Map.filter (/= 0) $
         | (mu, ca) <- Map.toList a
         , (nu, cb) <- Map.toList b
         ]
-
-mergeParts :: Partition -> Partition -> Partition
-mergeParts (Partition ps) (Partition qs) =
-    Partition $ sortBy (flip compare) (ps ++ qs)
 
 -- | The z_μ coefficient: z_μ = Π_i i^{m_i} · m_i!
 -- where m_i is the multiplicity of i in μ.
