@@ -20,6 +20,15 @@ library
         QHask.Profile
         QHask.CPP
         QHask.Conjecture
+        QHask.Sym.Types
+        QHask.Sym.Kostka
+        QHask.Sym.LR
+        QHask.Sym.Schur
+        QHask.Sym.Monomial
+        QHask.Sym.Homogeneous
+        QHask.Sym.Elementary
+        QHask.Sym.PowerSum
+        QHask.Sym
     build-depends:
         base ^>=4.18.3.0,
         containers
@@ -36,6 +45,15 @@ test-suite qhask-test
         QHask.ProfileSpec
         QHask.CPPSpec
         QHask.ConjectureSpec
+        QHask.Sym.TypesSpec
+        QHask.Sym.KostkaSpec
+        QHask.Sym.LRSpec
+        QHask.Sym.SchurSpec
+        QHask.Sym.MonomialSpec
+        QHask.Sym.HomogeneousSpec
+        QHask.Sym.ElementarySpec
+        QHask.Sym.PowerSumSpec
+        QHask.Sym.SymSpec
     build-depends:
         base ^>=4.18.3.0,
         containers,

@@ -9,7 +9,13 @@ module QHask.Partition
     , genPartitions
     , genCompatible
     , partitionsOf
+    , containedIn
+    , dominates
+    , mergeParts
+    , horizontalStrips
     ) where
+
+import Data.List (sortBy)
 
 -- | A partition: a weakly decreasing list of positive integers.
 newtype Partition = Partition { getParts :: [Int] }
@@ -88,6 +94,20 @@ genCompatible nuPrev shift maxPart maxSize =
                      , rest <- go (pos + 1) p (remaining - p)
                      ]
 
+-- | Does λ fit inside μ? i.e., λ_i ≤ μ_i for all i.
+containedIn :: Partition -> Partition -> Bool
+containedIn (Partition lam) (Partition mu) =
+    length lam <= length mu && and (zipWith (<=) lam mu)
+
+-- | Dominance order: λ dominates μ iff Σ_{i≤k} λ_i ≥ Σ_{i≤k} μ_i for all k.
+dominates :: Partition -> Partition -> Bool
+dominates lam mu =
+    weight lam == weight mu &&
+    all (>= 0) (zipWith (-) (partialSums lam) (partialSums mu))
+  where
+    n = max (partLen lam) (partLen mu)
+    partialSums p = scanl1 (+) [getPart p i | i <- [0..n-1]]
+
 -- | All partitions of exactly n.
 partitionsOf :: Int -> [Partition]
 partitionsOf 0 = [emptyPartition]
@@ -102,3 +122,41 @@ partitionsOf n
         | p <- [min remaining maxP, min remaining maxP - 1 .. 1]
         , rest <- go (remaining - p) p
         ]
+
+-- | Merge two partitions by combining and re-sorting parts.
+-- Used for multiplication in bases where product is indexing union (h, e, p).
+mergeParts :: Partition -> Partition -> Partition
+mergeParts (Partition ps) (Partition qs) =
+    Partition $ sortBy (flip compare) (ps ++ qs)
+
+-- | Enumerate all shapes ν such that ν/inner is a horizontal strip of size count,
+-- with ν ⊆ outer.
+--
+-- Horizontal strip condition: inner_i ≤ ν_i for all i, and ν_i ≤ inner_{i-1}
+-- for i ≥ 1 (at most one cell per column).
+horizontalStrips :: Partition -> Partition -> Int -> [Partition]
+horizontalStrips outer inner count
+    | count < 0 = []
+    | count == 0 = [inner]
+    | otherwise = map (Partition . dropTrailingZeros) $ go 0 count
+  where
+    nRows = partLen outer
+
+    go :: Int -> Int -> [[Int]]
+    go row remaining
+        | remaining < 0  = []
+        | row >= nRows   = [[] | remaining == 0]
+        | otherwise =
+            [ newVal : rest
+            | newVal <- [hi, hi - 1 .. lo]
+            , rest <- go (row + 1) (remaining - (newVal - innerRow))
+            ]
+      where
+        innerRow = getPart inner row
+        lo = innerRow
+        hi = minimum [ getPart outer row
+                     , innerRow + remaining
+                     , if row == 0 then getPart outer 0 else getPart inner (row - 1)
+                     ]
+
+    dropTrailingZeros = reverse . dropWhile (== 0) . reverse

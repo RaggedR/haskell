@@ -70,6 +70,26 @@ spec = do
         it "all results have weight <= maxSize" $
             all (\p -> weight p <= 10) (genPartitions 5 10) `shouldBe` True
 
+    describe "containedIn" $ do
+        it "[2,1] fits inside [3,2,1]" $
+            Partition [2,1] `containedIn` Partition [3,2,1] `shouldBe` True
+        it "[3,2] does not fit inside [2,2,2]" $
+            Partition [3,2] `containedIn` Partition [2,2,2] `shouldBe` False
+        it "empty fits inside anything" $
+            emptyPartition `containedIn` Partition [3,2,1] `shouldBe` True
+        it "nothing fits inside empty except empty" $
+            Partition [1] `containedIn` emptyPartition `shouldBe` False
+
+    describe "dominates" $ do
+        it "[3,1,1] dominates [2,2,1]" $
+            Partition [3,1,1] `dominates` Partition [2,2,1] `shouldBe` True
+        it "[2,2,1] does not dominate [3,1,1]" $
+            Partition [2,2,1] `dominates` Partition [3,1,1] `shouldBe` False
+        it "partition dominates itself" $
+            Partition [3,2,1] `dominates` Partition [3,2,1] `shouldBe` True
+        it "different weights never dominate" $
+            Partition [4,1] `dominates` Partition [3,1] `shouldBe` False
+
     describe "genCompatible" $ do
         it "with shift=0, all parts dominated" $
             let prev = Partition [3, 2]
